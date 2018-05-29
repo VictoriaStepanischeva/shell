@@ -1,11 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 
 int main()
 {
 	char c, prev;
-	char *buf, *first, *argv;
+	char *buf;
 	char **commands;
 	int len, n, nc, argc, i, pid;
 	argc = 0;
@@ -19,12 +22,12 @@ int main()
 	commands = (char**)malloc(n * sizeof(char*));
 	for (i = 0; i < nc; i++)
 	{
-		commands[i] = malloc(n*sizeof(char*));
+		commands[i] = malloc(n * sizeof(char*));
 	}
 	while ((c = getchar()) != EOF)
-		if (((c == ' ') || (c =='\n')) && (prev != ' '))
+	{
+		if (((c == ' ') || (c == '\n')) && (prev != ' '))
 		{
-			
 			if (argc == nc)
 			{
 				nc = 2 * nc;
@@ -34,7 +37,7 @@ int main()
 					commands[i] = realloc(commands[i], n * sizeof(char*));
 				}
 			}
-			for (i=0; i<len; i++)
+			for (i = 0; i < len; i++)
 			{
 				commands[argc][i] = buf[i];
 			}
@@ -63,14 +66,23 @@ int main()
 			}
 			prev = c;
 		}
-	printf("I've met EOF");
-	first
-	for (i=0; i<argc; i++)
-	{
-		printf("%s\n", commands[i]);
 	}
-	
+	commands[argc] = NULL;
+
 	/* execution */
+	pid = fork();
+	if (pid == -1)
+	{
+		perror("fork");
+		exit(1);
+	}
+	if (pid == 0)
+	{
+		execvp(commands[0], commands);
+		perror("execvp failed");
+		exit(1);
+	}
+	wait(NULL);
 	return 0;
 	
 }
