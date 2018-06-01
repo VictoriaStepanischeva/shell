@@ -26,7 +26,7 @@ int main()
 	}
 	while ((c = getchar()) != EOF)
 	{
-		if (((c == ' ') || (c == '\n')) && (prev != ' '))
+		if (((c == ' ') || (c == '\n')) && (prev != ' ') && (prev != '\\' ))
 		{
 			if (argc == nc)
 			{
@@ -50,6 +50,12 @@ int main()
 		else if ((c == ' ') && (prev == ' '))
 		{
 			prev = ' ';
+		}
+		else if ((c == ' ') && (prev == '\\'))
+		{
+			
+			buf[len-1] = c;
+			prev = c;
 		}
 		else
 		{
